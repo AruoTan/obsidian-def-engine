@@ -1,0 +1,9 @@
+{
+	"id": "def-engine",
+	"name": "Def Engine",
+	"version": "0.1.0",
+	"minAppVersion": "1.5.12",
+	"description": "Personal dictionary for your notes",
+	"author": "Aruo",
+	"isDesktopOnly": false
+}

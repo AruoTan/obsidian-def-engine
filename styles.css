@@ -15,10 +15,12 @@
 	float: right;
 }
 
-.read-def-decoration,
-.live-def-decoration {
-	text-decoration: underline var(--color-yellow) dotted;
-	-webkit-text-decoration: underline var(--color-yellow) dotted;
+:is(.read-def-decoration, .live-def-decoration):hover::before {
+	content: "def";
+	position: absolute;
+	top: -10px;
+	font-size: 10px;
+	font-style: normal;
 }
 
 .edit-modal-section-header {

@@ -8,7 +8,7 @@ type Modal = {
 	edit: EditDefModal;
 };
 
-export function DefModal<T extends Mode>(mode: T, app: App): Modal[T] {
+export default function initModal<T extends Mode>(mode: T, app: App): Modal[T] {
 	let modal;
 	switch (mode) {
 		case "add":

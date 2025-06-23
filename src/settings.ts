@@ -7,7 +7,6 @@ export const DEFAULT_SETTINGS: Partial<Settings> = {
 		enableCustomSize: false,
 		maxWidth: 150,
 		maxHeight: 150,
-		enableDefinitionLink: false,
 	},
 };
 
@@ -101,18 +100,5 @@ export class SettingsTab extends PluginSettingTab {
 					});
 				});
 		}
-
-		new Setting(containerEl)
-			.setName("启用定义链接")
-			.setDesc("弹窗中的定义将被标记并可以点击跳转到定义")
-			.addToggle((component) => {
-				component.setValue(
-					this.settings.defPopoverConfig.enableDefinitionLink
-				);
-				component.onChange(async (val) => {
-					this.settings.defPopoverConfig.enableDefinitionLink = val;
-					await this.saveCallback();
-				});
-			});
 	}
 }

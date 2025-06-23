@@ -51,7 +51,6 @@ declare global {
 			enableCustomSize: boolean;
 			maxWidth: number;
 			maxHeight: number;
-			enableDefinitionLink: boolean;
 		};
 	}
 

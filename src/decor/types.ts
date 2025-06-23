@@ -4,7 +4,7 @@ export default class BasicDecorator {
 			def: phrase,
 		};
 		attributes.onclick =
-			"event.stopPropagation();window.NoteDefinition.triggerDefPreview(this);";
+			"event.stopPropagation();window.defPopover.trigger?.(this);";
 		return attributes;
 	}
 }

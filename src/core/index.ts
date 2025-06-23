@@ -6,7 +6,7 @@ import { DefFileMap, DefScopeTree, DefSearcher } from "./types";
 import DefParser from "./parser";
 
 const defFileMap: DefFileMap = new DefFileMap();
-class DefManager extends DefScopeTree {
+class DefCore extends DefScopeTree {
 	events: EventRef[] = [];
 
 	constructor(app: App) {
@@ -84,12 +84,12 @@ class DefManager extends DefScopeTree {
 }
 
 declare global {
-	type DefManager = InstanceType<typeof DefManager>;
+	type DefCore = InstanceType<typeof DefCore>;
 	type DefSearcher = InstanceType<typeof DefSearcher>;
 
 	interface Window {
 		defEngine: Partial<{
-			manager: DefManager;
+			core: DefCore;
 			scopePhrases: PhraseInfo[];
 			Searcher: () => DefSearcher | undefined;
 			Parser: (app: App, file: DefFile) => DefParser | undefined;
@@ -100,26 +100,26 @@ declare global {
 }
 
 let state = false;
-export async function init(app: App) {
+export default async function initCore(app: App) {
 	if (state) return;
 
 	app.vault.getMarkdownFiles().forEach((file) => {
 		if (file.name == "concepts.md") defFileMap.addDefFile(file);
 	});
 
-	const manager = new DefManager(app);
+	const core = new DefCore(app);
 	const files = defFileMap.sortByDepth();
 	for (const [scope, file] of files) {
 		const parser = new DefParser(this.app, file);
 		const defs = await parser.run();
-		manager.setDefs(defs, scope);
+		core.setDefs(defs, scope);
 	}
 
 	window.defEngine = {
-		manager,
+		core,
 		scopePhrases: [],
 		Searcher: () => {
-			const defForest = manager.getDefs();
+			const defForest = core.getDefs();
 			if (!defForest) return;
 			return new DefSearcher(defForest);
 		},

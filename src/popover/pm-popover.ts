@@ -6,9 +6,7 @@ import {
 	normalizePath,
 } from "obsidian";
 
-let defModal: DefinitionModal;
-
-export class DefinitionModal extends Component {
+export default class DefinitionModal extends Component {
 	app: App;
 	modal: Modal;
 
@@ -40,13 +38,4 @@ export class DefinitionModal extends Component {
 		);
 		this.modal.open();
 	}
-}
-
-export function initDefinitionModal(app: App) {
-	defModal = new DefinitionModal(app);
-	return defModal;
-}
-
-export function getDefinitionModal() {
-	return defModal;
 }

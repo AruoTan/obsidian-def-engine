@@ -1,18 +1,14 @@
 import { Notice, Plugin, TFile, TFolder } from "obsidian";
-import { init } from "./core";
+
 import { LiveViewPlugin, ReadDecorator } from "./decor";
-import { injectGlobals } from "./globals";
-import { DefModal } from "./modal";
-import {
-	getDefinitionPopover,
-	initDefinitionPopover,
-} from "./popover/pc-popover";
-import { initDefinitionModal } from "./popover/pm-popover";
 import { DEFAULT_SETTINGS, SettingsTab } from "./settings";
 
-export default class NoteDefinition extends Plugin {
-	defManager: DefManager;
-	activeEditorExtensions: Extension[] = [];
+import initCore from "./core";
+import initModal from "./modal";
+import initPopover from "./popover";
+
+export default class DefEngine extends Plugin {
+	core: DefCore;
 
 	async onload() {
 		const settings = Object.assign(
@@ -23,21 +19,17 @@ export default class NoteDefinition extends Plugin {
 		window.defSettings = settings;
 
 		this.app.workspace.onLayoutReady(async () => {
-			await init(this.app);
-			this.defManager = window.defEngine.manager as DefManager;
-			this.defManager.events.forEach((event) =>
-				this.registerEvent(event)
-			);
+			await initCore(this.app);
+			this.core = window.defEngine.core as DefCore;
+			this.core.events.forEach((event) => this.registerEvent(event));
+
+			initPopover(this);
 
 			this.registerEvents();
 
 			this.registerEditorExtension(LiveViewPlugin);
 			this.registerMarkdownPostProcessor(ReadDecorator.process);
 		});
-		injectGlobals(window);
-
-		initDefinitionPopover(this);
-		initDefinitionModal(this.app);
 
 		this.addSettingTab(
 			new SettingsTab(this.app, this, this.saveSettings.bind(this))
@@ -52,10 +44,7 @@ export default class NoteDefinition extends Plugin {
 		// 监听编辑器菜单项
 		this.registerEvent(
 			this.app.workspace.on("editor-menu", (menu, editor) => {
-				const defPopover = getDefinitionPopover();
-				if (defPopover) {
-					defPopover.close();
-				}
+				window.defPopover.close?.();
 				const defEngine = window.defEngine;
 				const key = defEngine.getPhraseUnderCursor?.(editor);
 				if (!key) {
@@ -64,14 +53,14 @@ export default class NoteDefinition extends Plugin {
 							item.setTitle("添加定义")
 								.setIcon("plus")
 								.onClick(() => {
-									const addModal = DefModal("add", this.app);
+									const addModal = initModal("add", this.app);
 									addModal.activate(editor.getSelection());
 								});
 						});
 					}
 					return;
 				}
-				const def = this.defManager.getDef(key);
+				const def = this.core.getDef(key);
 				if (!def) return;
 				menu.addItem((item) => {
 					item.setTitle("跳转到定义")
@@ -84,7 +73,7 @@ export default class NoteDefinition extends Plugin {
 					item.setTitle("编辑定义")
 						.setIcon("pencil")
 						.onClick(() => {
-							const editModal = DefModal("edit", this.app);
+							const editModal = initModal("edit", this.app);
 							editModal.activate(def);
 						});
 				});
@@ -135,7 +124,7 @@ export default class NoteDefinition extends Plugin {
 						item.setTitle("刷新概念库")
 							.setIcon("refresh-cw")
 							.onClick(() => {
-								this.defManager.rebuild(
+								this.core.rebuild(
 									(filder as DefFile).parent.path
 								);
 								new Notice("概念库已刷新");
@@ -147,6 +136,6 @@ export default class NoteDefinition extends Plugin {
 	}
 
 	onunload() {
-		getDefinitionPopover().cleanUp();
+		window.defPopover.cleanUp?.();
 	}
 }

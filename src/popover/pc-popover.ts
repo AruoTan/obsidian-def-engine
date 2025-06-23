@@ -6,10 +6,6 @@ import {
 	Plugin,
 } from "obsidian";
 
-const DEF_POPOVER_ID = "definition-popover";
-
-let definitionPopover: DefinitionPopover;
-
 interface Coordinates {
 	left: number;
 	right: number;
@@ -17,7 +13,7 @@ interface Coordinates {
 	bottom: number;
 }
 
-export class DefinitionPopover extends Component {
+export default class DefinitionPopover extends Component {
 	app: App;
 	plugin: Plugin;
 	// Code mirror editor object for capturing vim events
@@ -25,6 +21,8 @@ export class DefinitionPopover extends Component {
 	// Ref to the currently mounted popover
 	// There should only be one mounted popover at all times
 	mountedPopover: HTMLElement | undefined;
+
+	private readonly ID = "definition-popover";
 
 	constructor(plugin: Plugin) {
 		super();
@@ -60,7 +58,7 @@ export class DefinitionPopover extends Component {
 
 	cleanUp() {
 		console.log("Cleaning popover elements");
-		const popoverEls = document.getElementsByClassName(DEF_POPOVER_ID);
+		const popoverEls = document.getElementsByClassName(this.ID);
 		for (let i = 0; i < popoverEls.length; i++) {
 			popoverEls[i].remove();
 		}
@@ -111,7 +109,7 @@ export class DefinitionPopover extends Component {
 		const el = parent.createEl("div", {
 			cls: "definition-popover",
 			attr: {
-				id: DEF_POPOVER_ID,
+				id: this.ID,
 				style: `visibility:hidden;`,
 			},
 		});
@@ -139,6 +137,10 @@ export class DefinitionPopover extends Component {
 				cls: "definition-popover-filename",
 			});
 		}
+		el.onmouseleave = () => {
+			this.close();
+			el.onmouseleave = null;
+		};
 		return el;
 	}
 
@@ -335,16 +337,4 @@ export class DefinitionPopover extends Component {
 	private getActiveView() {
 		return this.app.workspace.getActiveViewOfType(MarkdownView);
 	}
-}
-
-// Mount definition popover
-export function initDefinitionPopover(plugin: Plugin) {
-	if (definitionPopover) {
-		definitionPopover.cleanUp();
-	}
-	definitionPopover = new DefinitionPopover(plugin);
-}
-
-export function getDefinitionPopover() {
-	return definitionPopover;
 }

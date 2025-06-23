@@ -3,7 +3,7 @@ import { Plugin, PluginSettingTab, Setting } from "obsidian";
 export const DEFAULT_SETTINGS: Partial<Settings> = {
 	defPopoverConfig: {
 		displayAliases: true,
-		displayDefFileName: false,
+		displayScope: false,
 		enableCustomSize: false,
 		maxWidth: 150,
 		maxHeight: 150,
@@ -30,8 +30,7 @@ export class SettingsTab extends PluginSettingTab {
 		new Setting(containerEl).setHeading().setName("定义弹窗设置");
 
 		new Setting(containerEl)
-			.setName("显示别名")
-			.setDesc("显示为定义配置的别名列表")
+			.setName("显示定义别名")
 			.addToggle((component) => {
 				component.setValue(
 					this.settings.defPopoverConfig.displayAliases
@@ -43,14 +42,11 @@ export class SettingsTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
-			.setName("显示定义源文件")
-			.setDesc("显示定义的源文件标题")
+			.setName("显示定义作用域")
 			.addToggle((component) => {
-				component.setValue(
-					this.settings.defPopoverConfig.displayDefFileName
-				);
+				component.setValue(this.settings.defPopoverConfig.displayScope);
 				component.onChange(async (value) => {
-					this.settings.defPopoverConfig.displayDefFileName = value;
+					this.settings.defPopoverConfig.displayScope = value;
 					await this.saveCallback();
 				});
 			});

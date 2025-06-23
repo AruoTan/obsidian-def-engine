@@ -131,9 +131,9 @@ export default class DefinitionPopover extends Component {
 		);
 		this.postprocessMarkdown(contentEl, def);
 
-		if (popoverSettings.displayDefFileName) {
+		if (popoverSettings.displayScope) {
 			el.createEl("div", {
-				text: def.file.basename,
+				text: def.file.parent.path,
 				cls: "definition-popover-filename",
 			});
 		}
@@ -241,7 +241,7 @@ export default class DefinitionPopover extends Component {
 				parseInt(containerStyle.width) - coords.right
 			}px`;
 		} else {
-			positionStyle.left = `${coords.left}px`;
+			positionStyle.left = `200px`;
 		}
 
 		if (this.shouldOpenUpwards(coords.top, containerStyle)) {

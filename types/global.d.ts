@@ -47,7 +47,7 @@ declare global {
 	interface Settings {
 		defPopoverConfig: {
 			displayAliases: boolean;
-			displayDefFileName: boolean;
+			displayScope: boolean;
 			enableCustomSize: boolean;
 			maxWidth: number;
 			maxHeight: number;

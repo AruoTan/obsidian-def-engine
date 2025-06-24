@@ -7,6 +7,7 @@ export default class ReadDecorator extends BasicDecorator {
 		el: HTMLElement,
 		ctx: MdPostProcessorCtx
 	): void => {
+		if (ReadDecorator.isDefFile()) return;
 		const searcher = window.defEngine.Searcher?.();
 		if (!searcher) return;
 		this.buildDecors(el, searcher);

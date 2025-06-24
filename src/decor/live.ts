@@ -19,6 +19,7 @@ export default class LiveDecorator
 	}
 
 	update(update: ViewUpdate) {
+		if (LiveDecorator.isDefFile()) return;
 		if (update.docChanged || update.viewportChanged || update.focusChanged)
 			this.decorations = LiveDecorator.buildDecors(update.view);
 	}

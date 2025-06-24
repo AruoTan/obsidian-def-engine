@@ -94,6 +94,7 @@ declare global {
 			Searcher: () => DefSearcher | undefined;
 			Parser: (app: App, file: DefFile) => DefParser | undefined;
 			getDefFileMap: () => DefFileMap;
+			getActiveFileName: () => string;
 			getPhraseUnderCursor: (editor: Editor) => string;
 		}>;
 	}
@@ -139,6 +140,11 @@ export default async function initCore(app: App) {
 				if (scope == "/") map.addDefFile(file);
 			});
 			return map;
+		},
+		getActiveFileName: () => {
+			const file = app.workspace.getActiveFile();
+			if (!file) return "";
+			return file.name;
 		},
 		getPhraseUnderCursor: (editor: Editor) => {
 			const offset = editor.posToOffset(editor.getCursor());
